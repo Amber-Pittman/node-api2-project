@@ -60,6 +60,26 @@ router.get("/:id/comments", (req, res) => {
         })
 })
 
+//POST request to /api/posts -- CREATES new post
+router.post("/", (req, res) => {
+    if (!req.body.title || !req.body.contents) {
+        return res.status(404).json({
+            errorMessage: "Please provide title and contents for the post."
+        })
+    }
+    db.insert(req.body) 
+    .then(post => {
+        res.status(201).json(post)
+    })
+    .catch(error => {
+        console.log(error)
+        res.status(500).json({
+            error: "There was an error while saving the post to the database"
+        })
+    })
+})
+
+//POST request to /api/posts/:id/comments
 
 
 module.exports = router
