@@ -68,18 +68,45 @@ router.post("/", (req, res) => {
         })
     }
     db.insert(req.body) 
-    .then(post => {
-        res.status(201).json(post)
-    })
-    .catch(error => {
-        console.log(error)
-        res.status(500).json({
-            error: "There was an error while saving the post to the database"
+        .then(post => {
+            res.status(201).json(post)
         })
-    })
+        .catch(error => {
+            console.log(error)
+            res.status(500).json({
+                error: "There was an error while saving the post to the database"
+            })
+        })
 })
 
-//POST request to /api/posts/:id/comments
+//POST request to /api/posts/:id/comments -- CREATE new comment
+router.post("/:id/comments", (req, res) => {
+    const { text } = req.body // when testing in Insomnia { "text": "comment"}
+    const { id: post_id } = req.params
 
+    if (!req.body.text) {
+        return res.status(400).json({
+            errorMessage: "Please provide text for the comment."
+        })
+    }
+
+    db.insertComment({ text, post_id })
+        .then(comment => {
+            console.log("comment", comment)
+            if (!comment.id) {
+                res.status(404).json({
+                    message: "The post with the specified ID does not exist."
+                })
+            } else {
+                res.status(201).json(comment)
+            }
+        })
+        .catch(error => {
+            console.log(error)
+            res.status(500).json({ 
+                error: "There was an error while saving the comment to the database."
+            })
+        })
+})
 
 module.exports = router
