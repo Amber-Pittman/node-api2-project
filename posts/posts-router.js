@@ -132,14 +132,14 @@ router.delete("/:id", (req, res) => {
 })
 
 //PUT request to /api/posts/:id  -- Update the post
-router.put("/", (req, res) => {
+router.put("/:id", (req, res) => {
     if (!req.body.title || !req.body.contents) {
         return res.status(400).json({
             errorMessage: "Please provide title and contents for the post."
         })
     }
     db.update(req.params.id, req.body) 
-        .then(post => {
+        .then((post) => {
             if (post) {
                 res.status(200).json(post)
             } else {
